@@ -1,0 +1,7 @@
+upload:
+  - /root/test.txt#/home/kehao/test.txt
+  - /root/test.sh#/home/kehao/test.sh
+commands:
+  - /bin/sh /home/kehao/test.sh
+download:
+  - /home/kehao/test.result#/home/kehao/test1.result
