@@ -2,9 +2,11 @@
 package cmd
 
 import (
+	"github.com/google/goterm/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
+	"path"
 	"remote_exec/util"
 	"strings"
 )
@@ -21,10 +23,12 @@ var uploadCmd = &cobra.Command{
 			err     error
 		)
 		if config, err = util.LoadCfg("config"); err != nil {
-			log.Fatalln("load config.yaml failed.")
+			log.Println(term.Redf("load config.yaml failed."))
+			return
 		}
 		if command, err = util.LoadCfg("command"); err != nil {
-			log.Fatalln("load command.yaml failed.")
+			log.Println(term.Redf("load command.yaml failed."))
+			return
 		}
 		var (
 			user   string
@@ -47,15 +51,14 @@ var uploadCmd = &cobra.Command{
 					to   string
 				)
 				from = params[0]
-				to = params[0]
+				to = path.Dir(params[0])
 				if len(params) == 2 {
 					to = params[1]
 				}
-				log.Printf("upload %s to %s %s.\n", from, host, to)
 				util.RemotePut(22, host, user, passwd, from, to)
 			}
 		}
-		log.Println("upload file finished.")
+		log.Println(term.Greenf("upload file finished."))
 	},
 }
 

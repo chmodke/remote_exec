@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/google/goterm/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -20,11 +21,12 @@ var executeCmd = &cobra.Command{
 			err     error
 		)
 		if config, err = util.LoadCfg("config"); err != nil {
-			log.Fatalln("load config.yaml failed.")
+			log.Println(term.Redf("load config.yaml failed."))
+			return
 		}
-
 		if command, err = util.LoadCfg("command"); err != nil {
-			log.Fatalln("load command.yaml failed.")
+			log.Println(term.Redf("load command.yaml failed."))
+			return
 		}
 		var (
 			user         string
@@ -47,12 +49,13 @@ var executeCmd = &cobra.Command{
 		rootPrompt = regexp.MustCompile(config.GetString("rootPrompt"))
 		passwdPrompt = regexp.MustCompile(config.GetString("passwdPrompt"))
 
+		log.Println("start execute command...")
 		for _, host := range hosts {
 			for _, command := range commands {
-				log.Printf("execute %s on %s.\n", command, host)
 				util.RemoteExec(22, host, user, passwd, rootPwd, command, rootPrompt, passwdPrompt, timeout)
 			}
 		}
+		log.Println(term.Greenf("execute command finished."))
 	},
 }
 

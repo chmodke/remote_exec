@@ -1,7 +1,7 @@
 upload:
-  - /root/test.txt#/home/kehao/test.txt
-  - /root/test.sh#/home/kehao/test.sh
+  - /root/test.txt#/home/kehao
+  - /root/test.sh#/home/kehao
 commands:
   - /bin/sh /home/kehao/test.sh
 download:
-  - /home/kehao/test.result#/home/kehao/test1.result
+  - /home/kehao/test.result#/home/kehao/result/
