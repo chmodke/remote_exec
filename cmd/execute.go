@@ -7,6 +7,7 @@ import (
 	"log"
 	"regexp"
 	"remote_exec/util"
+	"strings"
 	"time"
 )
 
@@ -52,6 +53,15 @@ var executeCmd = &cobra.Command{
 		for _, host := range hostList {
 			h := &util.Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
 			hosts = append(hosts, h)
+		}
+
+		if config.IsSet("spc_hosts") {
+			spcHosts := config.GetStringSlice("spc_hosts")
+			for _, spcHost := range spcHosts {
+				params := strings.Split(spcHost, " ")
+				h := &util.Host{Port: port, User: user, Host: params[0], Passwd: params[1], RootPwd: params[2]}
+				hosts = append(hosts, h)
+			}
 		}
 
 		if config.IsSet("timeout") {

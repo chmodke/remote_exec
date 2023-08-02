@@ -52,6 +52,15 @@ var uploadCmd = &cobra.Command{
 			hosts = append(hosts, h)
 		}
 
+		if config.IsSet("spc_hosts") {
+			spcHosts := config.GetStringSlice("spc_hosts")
+			for _, spcHost := range spcHosts {
+				params := strings.Split(spcHost, " ")
+				h := &util.Host{Port: port, User: user, Host: params[0], Passwd: params[1], RootPwd: params[2]}
+				hosts = append(hosts, h)
+			}
+		}
+
 		files = command.GetStringSlice("upload")
 
 		log.Println("start upload file...")
