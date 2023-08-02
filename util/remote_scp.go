@@ -9,28 +9,28 @@ import (
 	"path"
 )
 
-func RemotePut(port int, host, user, passwd, localPath, remoteDir string) {
-	log.Printf("[%s] upload %s to %s.\n", host, localPath, remoteDir)
+func RemotePut(host *Host, localPath, remoteDir string) {
+	log.Printf("[%s] upload %s to %s.\n", host.Host, localPath, remoteDir)
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
 		err       error
 	)
-	if sshClient, err = SshClient(user, passwd, host, port); err != nil {
-		log.Println(term.Redf("[%s] ssh client connect error: %v", host, err))
+	if sshClient, err = SshClient(host); err != nil {
+		log.Println(term.Redf("[%s] ssh client connect error: %v", host.Host, err))
 		return
 	}
 	defer sshClient.Close()
 
 	if ftpClient, err = SftpConnect(sshClient); err != nil {
-		log.Println(term.Redf("[%s] sftp client connect error: %v", host, err))
+		log.Println(term.Redf("[%s] sftp client connect error: %v", host.Host, err))
 		return
 	}
 	defer ftpClient.Close()
 
 	localFile, err := os.Open(localPath)
 	if err != nil {
-		log.Println(term.Redf("[%s] open %s error: %v", host, localPath, err))
+		log.Println(term.Redf("[%s] open %s error: %v", host.Host, localPath, err))
 		return
 
 	}
@@ -41,7 +41,7 @@ func RemotePut(port int, host, user, passwd, localPath, remoteDir string) {
 
 	remoteFile, err := ftpClient.Create(path.Join(remoteDir, fileName))
 	if err != nil {
-		log.Println(term.Redf("[%s] sftp create %s error: %v", host, remoteDir, err))
+		log.Println(term.Redf("[%s] sftp create %s error: %v", host.Host, remoteDir, err))
 		return
 
 	}
@@ -59,24 +59,24 @@ func RemotePut(port int, host, user, passwd, localPath, remoteDir string) {
 			remoteFile.Write(buf[:len])
 		}
 	}
-	log.Println(term.Bluef("[%s] copy %s finished!", host, localPath))
+	log.Println(term.Bluef("[%s] upload %s finished!", host.Host, localPath))
 }
 
-func RemoteGet(port int, host, user, passwd, remotePath, localDir string) {
-	log.Printf("[%s] download %s to %s.\n", host, remotePath, localDir)
+func RemoteGet(host *Host, remotePath, localDir string) {
+	log.Printf("[%s] download %s to %s.\n", host.Host, remotePath, localDir)
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
 		err       error
 	)
-	if sshClient, err = SshClient(user, passwd, host, port); err != nil {
-		log.Println(term.Redf("[%s] ssh client connect error: %v", host, err))
+	if sshClient, err = SshClient(host); err != nil {
+		log.Println(term.Redf("[%s] ssh client connect error: %v", host.Host, err))
 		return
 	}
 	defer sshClient.Close()
 
 	if ftpClient, err = SftpConnect(sshClient); err != nil {
-		log.Println(term.Redf("[%s] sftp client connect error: %v", host, err))
+		log.Println(term.Redf("[%s] sftp client connect error: %v", host.Host, err))
 		return
 	}
 	defer ftpClient.Close()
@@ -84,9 +84,9 @@ func RemoteGet(port int, host, user, passwd, remotePath, localDir string) {
 	CreateDir(localDir)
 	fileName := path.Base(remotePath)
 
-	localFile, err := os.Create(path.Join(localDir, host+"_"+fileName))
+	localFile, err := os.Create(path.Join(localDir, host.Host+"_"+fileName))
 	if err != nil {
-		log.Println(term.Redf("[%s] create %s error: %v", host, localDir, err))
+		log.Println(term.Redf("[%s] create %s error: %v", host.Host, localDir, err))
 		return
 
 	}
@@ -94,7 +94,7 @@ func RemoteGet(port int, host, user, passwd, remotePath, localDir string) {
 
 	remoteFile, err := ftpClient.Open(remotePath)
 	if err != nil {
-		log.Println(term.Redf("[%s] sftp open %s error: %v", host, remotePath, err))
+		log.Println(term.Redf("[%s] sftp open %s error: %v", host.Host, remotePath, err))
 		return
 
 	}
@@ -102,5 +102,5 @@ func RemoteGet(port int, host, user, passwd, remotePath, localDir string) {
 
 	remoteFile.WriteTo(localFile)
 
-	log.Println(term.Bluef("[%s] copy %s finished!", host, remotePath))
+	log.Println(term.Bluef("[%s] download %s finished!", host.Host, remotePath))
 }

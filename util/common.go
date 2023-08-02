@@ -13,11 +13,19 @@ import (
 	"time"
 )
 
+type Host struct {
+	Port    int `default:"22"`
+	Host    string
+	User    string
+	Passwd  string
+	RootPwd string
+}
+
 const (
 	Timeout = 10 * time.Second
 )
 
-func SshClient(user, passwd, host string, port int) (*ssh.Client, error) {
+func SshClient(host *Host) (*ssh.Client, error) {
 	var (
 		auth         []ssh.AuthMethod
 		addr         string
@@ -25,13 +33,13 @@ func SshClient(user, passwd, host string, port int) (*ssh.Client, error) {
 	)
 	// get auth method
 	auth = make([]ssh.AuthMethod, 0)
-	auth = append(auth, ssh.Password(passwd))
+	auth = append(auth, ssh.Password(host.Passwd))
 
 	// get host public key
-	//hostKey := getHostKey(host)
+	//hostKey := getHostKey(host.Host)
 
 	clientConfig = &ssh.ClientConfig{
-		User:    user,
+		User:    host.User,
 		Auth:    auth,
 		Timeout: 30 * time.Second,
 		// allow any host key to be used (non-prod)
@@ -42,10 +50,10 @@ func SshClient(user, passwd, host string, port int) (*ssh.Client, error) {
 	}
 
 	// connect to ssh
-	if strings.Contains(host, ":") {
-		addr = fmt.Sprintf("[%s]:%d", host, port)
+	if strings.Contains(host.Host, ":") {
+		addr = fmt.Sprintf("[%s]:%d", host.Host, host.Port)
 	} else {
-		addr = fmt.Sprintf("%s:%d", host, port)
+		addr = fmt.Sprintf("%s:%d", host.Host, host.Port)
 	}
 	return ssh.Dial("tcp", addr, clientConfig)
 }

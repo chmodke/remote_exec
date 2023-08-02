@@ -1,3 +1,4 @@
+port: 22
 rootPrompt: '#'
 passwdPrompt: '.*assword.*'
 timeout: 10

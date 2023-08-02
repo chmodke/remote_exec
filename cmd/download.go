@@ -31,14 +31,26 @@ var downloadCmd = &cobra.Command{
 			return
 		}
 		var (
-			user   string
-			passwd string
-			hosts  []string
-			files  []string
+			port     = 22
+			user     string
+			passwd   string
+			rootPwd  string
+			hostList []string
+			hosts    []*util.Host
+			files    []string
 		)
+		if config.IsSet("port") {
+			port = config.GetInt("port")
+		}
 		user = config.GetString("user")
 		passwd = config.GetString("passwd")
-		hosts = config.GetStringSlice("hosts")
+		rootPwd = config.GetString("rootPwd")
+		hostList = config.GetStringSlice("hosts")
+
+		for _, host := range hostList {
+			h := &util.Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
+			hosts = append(hosts, h)
+		}
 
 		files = command.GetStringSlice("download")
 		log.Println("start download file...")
@@ -54,7 +66,7 @@ var downloadCmd = &cobra.Command{
 				if len(params) == 2 {
 					to = params[1]
 				}
-				util.RemoteGet(22, host, user, passwd, from, to)
+				util.RemoteGet(host, from, to)
 			}
 		}
 		log.Println(term.Greenf("download file finished."))

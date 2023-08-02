@@ -7,6 +7,7 @@ import (
 	"log"
 	"regexp"
 	"remote_exec/util"
+	"time"
 )
 
 var executeCmd = &cobra.Command{
@@ -29,20 +30,33 @@ var executeCmd = &cobra.Command{
 			return
 		}
 		var (
+			port         = 22
 			user         string
 			passwd       string
 			rootPwd      string
-			hosts        []string
+			hostList     []string
+			hosts        []*util.Host
 			commands     []string
 			rootPrompt   *regexp.Regexp
 			passwdPrompt *regexp.Regexp
-			timeout      int64
+			timeout      = int64(10)
 		)
+		if config.IsSet("port") {
+			port = config.GetInt("port")
+		}
 		user = config.GetString("user")
 		passwd = config.GetString("passwd")
 		rootPwd = config.GetString("rootPwd")
-		hosts = config.GetStringSlice("hosts")
-		timeout = config.GetInt64("timeout")
+		hostList = config.GetStringSlice("hosts")
+
+		for _, host := range hostList {
+			h := &util.Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
+			hosts = append(hosts, h)
+		}
+
+		if config.IsSet("timeout") {
+			timeout = config.GetInt64("timeout")
+		}
 
 		commands = command.GetStringSlice("commands")
 
@@ -52,7 +66,7 @@ var executeCmd = &cobra.Command{
 		log.Println("start execute command...")
 		for _, host := range hosts {
 			for _, command := range commands {
-				util.RemoteExec(22, host, user, passwd, rootPwd, command, rootPrompt, passwdPrompt, timeout)
+				util.RemoteExec(host, command, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)
 			}
 		}
 		log.Println(term.Greenf("execute command finished."))
