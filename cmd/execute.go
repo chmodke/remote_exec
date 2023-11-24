@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/google/goterm/term"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -59,7 +60,7 @@ var executeCmd = &cobra.Command{
 			spcHosts := config.GetStringSlice("spc_hosts")
 			for _, spcHost := range spcHosts {
 				params := strings.Split(spcHost, " ")
-				h := &util.Host{Port: port, User: user, Host: params[0], Passwd: params[1], RootPwd: params[2]}
+				h := &util.Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}
 				hosts = append(hosts, h)
 			}
 		}

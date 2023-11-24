@@ -25,10 +25,10 @@ user: 'kehao'
 passwd: '123456'
 rootPwd: '123456'
 hosts:
-  - '172.17.0.3'
-  - '172.17.0.4'
+  - '172.18.0.3'
+  - '172.18.0.4'
 spc_hosts:
-  - '172.17.0.5 123456 123456'
+  - '127.0.0.1 23 123456 123456'
 ```
 
 - port: ssh端口；
@@ -39,7 +39,7 @@ spc_hosts:
 - passwd：ssh登录密码；
 - rootPwd：root用户密码；
 - hosts：服务器IP地址列表；
-- spc_hosts：特殊密码的服务器列表，格式：`IP 用户密码 root用户密码`。
+- spc_hosts：特殊密码的服务器列表，格式：`IP PORT 用户密码 root用户密码`。
 
 ### 命令配置文件
 
@@ -98,47 +98,47 @@ chown kehao: /home/kehao/result.txt
 ```powershell
 kehao@kehaopcs ~/remote_exec $ ./remote upload
 2023/08/05 11:39:40 start upload file...
-2023/08/05 11:39:40 [172.17.0.3] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:40 [172.17.0.3] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:40 [172.17.0.3] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:41 [172.17.0.3] upload /home/kehao/test.sh finished!
-2023/08/05 11:39:41 [172.17.0.4] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:41 [172.17.0.4] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:41 [172.17.0.4] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:41 [172.17.0.4] upload /home/kehao/test.sh finished!
-2023/08/05 11:39:41 [172.17.0.5] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:42 [172.17.0.5] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:42 [172.17.0.5] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:42 [172.17.0.5] upload /home/kehao/test.sh finished!
+2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.txt finished!
+2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.3:22] upload /home/kehao/test.sh finished!
+2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.txt finished!
+2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.sh finished!
+2023/08/05 11:39:41 [127.0.0.1:22] upload /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.txt finished!
+2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.sh finished!
 2023/08/05 11:39:42 upload file finished.
 
 kehao@kehaopcs ~/remote_exec $ ./remote execute
 2023/08/05 11:39:45 start execute command...
-2023/08/05 11:39:45 [172.17.0.3] execute (/bin/sh /home/kehao/test.sh).
-2023/08/05 11:39:46 [172.17.0.3] execute (/bin/sh /home/kehao/test.sh) result: 
-I am 172.17.0.3 :)
+2023/08/05 11:39:45 [172.18.0.3:22] execute (/bin/sh /home/kehao/test.sh).
+2023/08/05 11:39:46 [172.18.0.3:22] execute (/bin/sh /home/kehao/test.sh) result: 
+I am 172.18.0.3 :)
 [root@5421d92524c8 ~]# 
-2023/08/05 11:39:46 [172.17.0.3] execute command finished!
-2023/08/05 11:39:46 [172.17.0.4] execute (/bin/sh /home/kehao/test.sh).
-2023/08/05 11:39:48 [172.17.0.4] execute (/bin/sh /home/kehao/test.sh) result: 
-I am 172.17.0.4 :)
+2023/08/05 11:39:46 [172.18.0.3:22] execute command finished!
+2023/08/05 11:39:46 [172.18.0.4:22] execute (/bin/sh /home/kehao/test.sh).
+2023/08/05 11:39:48 [172.18.0.4:22] execute (/bin/sh /home/kehao/test.sh) result: 
+I am 172.18.0.4 :)
 [root@9c0bbfbc1446 ~]# 
-2023/08/05 11:39:48 [172.17.0.4] execute command finished!
-2023/08/05 11:39:48 [172.17.0.5] execute (/bin/sh /home/kehao/test.sh).
-2023/08/05 11:39:49 [172.17.0.5] execute (/bin/sh /home/kehao/test.sh) result: 
-I am 172.17.0.5 :)
+2023/08/05 11:39:48 [172.18.0.4:22] execute command finished!
+2023/08/05 11:39:48 [127.0.0.1:22] execute (/bin/sh /home/kehao/test.sh).
+2023/08/05 11:39:49 [127.0.0.1:22] execute (/bin/sh /home/kehao/test.sh) result: 
+I am 172.18.0.5 :)
 [root@93d37bd5e970 ~]# 
-2023/08/05 11:39:49 [172.17.0.5] execute command finished!
+2023/08/05 11:39:49 [127.0.0.1:22] execute command finished!
 2023/08/05 11:39:49 execute command finished.
 
 kehao@kehaopcs ~/remote_exec $ ./remote download
 2023/08/05 11:40:09 start download file...
-2023/08/05 11:40:09 [172.17.0.3] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:09 [172.17.0.3] download /home/kehao/result.txt finished!
-2023/08/05 11:40:09 [172.17.0.4] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:10 [172.17.0.4] download /home/kehao/result.txt finished!
-2023/08/05 11:40:10 [172.17.0.5] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:10 [172.17.0.5] download /home/kehao/result.txt finished!
+2023/08/05 11:40:09 [172.18.0.3:22] download /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:09 [172.18.0.3:22] download /home/kehao/result.txt finished!
+2023/08/05 11:40:09 [172.18.0.4:22] download /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:10 [172.18.0.4:22] download /home/kehao/result.txt finished!
+2023/08/05 11:40:10 [127.0.0.1:22] download /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:10 [127.0.0.1:22] download /home/kehao/result.txt finished!
 2023/08/05 11:40:10 download file finished.
 ```
 
@@ -171,25 +171,25 @@ total 12
 ```powershell
 kehao@kehaopcs ~/remote_exec $ ls -l /home/kehao/result/
 total 12
--rw-r--r--. 1 kehao manager 126 Aug  5 11:40 172.17.0.3_result.txt
--rw-r--r--. 1 kehao manager 126 Aug  5 11:40 172.17.0.4_result.txt
--rw-r--r--. 1 kehao manager 126 Aug  5 11:40 172.17.0.5_result.txt
+-rw-r--r--. 1 kehao manager 126 Aug  5 11:40 172.18.0.3_22_result.txt
+-rw-r--r--. 1 kehao manager 126 Aug  5 11:40 172.18.0.4_22_result.txt
+-rw-r--r--. 1 kehao manager 126 Aug  5 11:40 127.0.0.1_23_result.txt
 
-kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/172.17.0.3_result.txt 
+kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/172.18.0.3_22_result.txt 
 5421d92524c8
-172.17.0.3
+172.18.0.3
 uid=0(root) gid=0(root) groups=0(root)
 -rw-rw-r--. 1 kehao kehao 10 Aug  5 11:39 /home/kehao/test.txt
 
-kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/172.17.0.4_result.txt 
+kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/172.18.0.4_22_result.txt 
 9c0bbfbc1446
-172.17.0.4
+172.18.0.4
 uid=0(root) gid=0(root) groups=0(root)
 -rw-rw-r--. 1 kehao kehao 10 Aug  5 11:39 /home/kehao/test.txt
 
-kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/172.17.0.5_result.txt 
+kehao@kehaopcs ~/remote_exec $ cat /home/kehao/result/127.0.0.1_23_result.txt 
 93d37bd5e970
-172.17.0.5
+172.18.0.5
 uid=0(root) gid=0(root) groups=0(root)
 -rw-rw-r--. 1 kehao kehao 10 Aug  5 11:39 /home/kehao/test.txt
 ```
