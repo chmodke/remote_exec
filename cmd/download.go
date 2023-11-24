@@ -3,7 +3,6 @@ package cmd
 
 import (
 	"github.com/google/goterm/term"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -19,52 +18,25 @@ var downloadCmd = &cobra.Command{
 	Example: "remote download",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			config  *viper.Viper
-			command *viper.Viper
 			err     error
+			command *viper.Viper
+			hosts   []*util.Host
+			files   []string
+			errCnt  = 0
 		)
-		if config, err = util.LoadCfg("config"); err != nil {
-			log.Println(term.Redf("load config.yaml failed."))
+		if hosts, err = util.ParseHosts(); err != nil {
+			log.Println(term.Redf(err.Error()))
 			return
 		}
 		if command, err = util.LoadCfg("command"); err != nil {
 			log.Println(term.Redf("load command.yaml failed."))
 			return
 		}
-		var (
-			port     = 22
-			user     string
-			passwd   string
-			rootPwd  string
-			hostList []string
-			hosts    []*util.Host
-			files    []string
-		)
-		if config.IsSet("port") {
-			port = config.GetInt("port")
-		}
-		user = config.GetString("user")
-		passwd = config.GetString("passwd")
-		rootPwd = config.GetString("rootPwd")
-		hostList = config.GetStringSlice("hosts")
-
-		for _, host := range hostList {
-			h := &util.Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
-			hosts = append(hosts, h)
-		}
-
-		if config.IsSet("spc_hosts") {
-			spcHosts := config.GetStringSlice("spc_hosts")
-			for _, spcHost := range spcHosts {
-				params := strings.Split(spcHost, " ")
-				h := &util.Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}
-				hosts = append(hosts, h)
-			}
-		}
 
 		files = command.GetStringSlice("download")
 		log.Println("start download file...")
-		for _, host := range hosts {
+		for idx, host := range hosts {
+			result := true
 			for _, file := range files {
 				params := strings.Split(file, "#")
 				var (
@@ -76,8 +48,12 @@ var downloadCmd = &cobra.Command{
 				if len(params) == 2 {
 					to = params[1]
 				}
-				util.RemoteGet(host, from, to)
+				result = util.RemoteGet(host, from, to) && result
 			}
+			if !result {
+				errCnt++
+			}
+			log.Printf("progress [%v/%v/%v]...\n", idx+1, errCnt, len(hosts))
 		}
 		log.Println(term.Greenf("download file finished."))
 	},

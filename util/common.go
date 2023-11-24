@@ -2,8 +2,10 @@ package util
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/pkg/sftp"
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 	"log"
@@ -110,6 +112,47 @@ func LoadCfg(configName string) (*viper.Viper, error) {
 	}
 
 	return v, nil
+}
+
+// ParseHosts parse host info from config.yaml
+func ParseHosts() ([]*Host, error) {
+	var (
+		config   *viper.Viper
+		err      error
+		hosts    []*Host
+		port     = 22
+		user     string
+		passwd   string
+		rootPwd  string
+		hostList []string
+	)
+
+	if config, err = LoadCfg("config"); err != nil {
+		return hosts, errors.New("load config.yaml failed")
+	}
+
+	if config.IsSet("port") {
+		port = config.GetInt("port")
+	}
+	user = config.GetString("user")
+	passwd = config.GetString("passwd")
+	rootPwd = config.GetString("rootPwd")
+	hostList = config.GetStringSlice("hosts")
+
+	for _, host := range hostList {
+		h := &Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
+		hosts = append(hosts, h)
+	}
+
+	if config.IsSet("spc_hosts") {
+		spcHosts := config.GetStringSlice("spc_hosts")
+		for _, spcHost := range spcHosts {
+			params := strings.Split(spcHost, " ")
+			h := &Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}
+			hosts = append(hosts, h)
+		}
+	}
+	return hosts, nil
 }
 
 // CreateDir 创建文件夹
