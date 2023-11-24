@@ -17,3 +17,7 @@ func Execute() {
 		os.Exit(1)
 	}
 }
+
+func init() {
+	rootCmd.Version = "1.0.0\nReport Bug: <https://gitee.com/chmodke/remote_exec/>"
+}
