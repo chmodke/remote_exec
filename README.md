@@ -105,7 +105,7 @@ Flags:
 Use "remote [command] --help" for more information about a command.
 ```
 
- - 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序。 
+- 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序。
 
 ## 使用样例
 

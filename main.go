@@ -1,11 +1,14 @@
 package main
 
 import (
-	"log"
 	"remote_exec/cmd"
+	"remote_exec/util"
 )
 
 func main() {
-	log.SetFlags(log.Ldate | log.Ltime)
+	if closeFile := util.InitLog(); closeFile != nil {
+		defer closeFile()
+	}
 	cmd.Execute()
+
 }
