@@ -20,4 +20,5 @@ func Execute() {
 
 func init() {
 	rootCmd.Version = "1.0.0\nReport Bug: <https://gitee.com/chmodke/remote_exec/>"
+	rootCmd.PersistentFlags().IntP("thread", "t", 1, "maximum number of concurrent (0 < t <= 16)")
 }

@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -171,4 +172,49 @@ func CreateDir(path string) (bool, error) {
 		}
 	}
 	return false, err
+}
+
+// Process is concurrent controller
+func Process(taskLimit int, hosts []*Host, tasks []string, exec func(*Host, []string)) {
+	var i, j int
+	var jobGroup sync.WaitGroup
+	hostChan := make(chan *Host, len(hosts))
+
+	for j = 0; j < len(hosts); j++ {
+		hostChan <- hosts[j]
+	}
+	close(hostChan)
+
+	jobGroup.Add(len(hosts))
+
+	for i = 0; i < Max(Min(taskLimit, 16), 1); i++ {
+		go func(taskChan chan *Host) {
+			for {
+				if host, ok := <-taskChan; ok {
+					log.Printf("progress [%v/%v]...\n", len(taskChan), cap(taskChan))
+					exec(host, tasks)
+					jobGroup.Done()
+				} else {
+					break
+				}
+			}
+		}(hostChan)
+	}
+	jobGroup.Wait()
+}
+
+func Min(x, y int) int {
+	if x < y {
+		return x
+	} else {
+		return y
+	}
+}
+
+func Max(x, y int) int {
+	if x > y {
+		return x
+	} else {
+		return y
+	}
 }

@@ -61,23 +61,51 @@ download:
 
 ## 使用方法
 
-### 批量上传
+### 命令
+
+#### 批量上传
 
 ```shell
 remote upload
 ```
 
-### 批量执行
+#### 批量执行
 
 ```shell
 remote execute
 ```
 
-### 批量下载
+#### 批量下载
 
 ```shell
 remote download
 ```
+
+### 参数
+
+```shell
+remote --help
+remote execute tool
+
+Usage:
+  remote [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  download    download file from remote
+  execute     execute command on remote
+  help        Help about any command
+  upload      upload file to remote
+
+Flags:
+  -h, --help         help for remote
+  -t, --thread int   maximum number of concurrent (0 < t <= 16) (default 1)
+  -v, --version      version for remote
+
+Use "remote [command] --help" for more information about a command.
+```
+
+ - 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序。 
 
 ## 使用样例
 

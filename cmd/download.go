@@ -22,7 +22,7 @@ var downloadCmd = &cobra.Command{
 			command *viper.Viper
 			hosts   []*util.Host
 			files   []string
-			errCnt  = 0
+			thread  int
 		)
 		if hosts, err = util.ParseHosts(); err != nil {
 			log.Println(term.Redf(err.Error()))
@@ -35,8 +35,11 @@ var downloadCmd = &cobra.Command{
 
 		files = command.GetStringSlice("download")
 		log.Println("start download file...")
-		for idx, host := range hosts {
-			result := true
+
+		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
+			thread = 1
+		}
+		util.Process(thread, hosts, files, func(host *util.Host, files []string) {
 			for _, file := range files {
 				params := strings.Split(file, "#")
 				var (
@@ -48,13 +51,9 @@ var downloadCmd = &cobra.Command{
 				if len(params) == 2 {
 					to = params[1]
 				}
-				result = util.RemoteGet(host, from, to) && result
+				util.RemoteGet(host, from, to)
 			}
-			if !result {
-				errCnt++
-			}
-			log.Printf("progress [%v/%v/%v]...\n", idx+1, errCnt, len(hosts))
-		}
+		})
 		log.Println(term.Greenf("download file finished."))
 	},
 }

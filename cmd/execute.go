@@ -25,7 +25,7 @@ var executeCmd = &cobra.Command{
 			rootPrompt   *regexp.Regexp
 			passwdPrompt *regexp.Regexp
 			timeout      = int64(10)
-			errCnt       = 0
+			thread       int
 		)
 
 		if hosts, err = util.ParseHosts(); err != nil {
@@ -51,17 +51,17 @@ var executeCmd = &cobra.Command{
 		passwdPrompt = regexp.MustCompile(config.GetString("passwdPrompt"))
 
 		log.Println("start execute command...")
-		for idx, host := range hosts {
-			result := true
-			for _, command := range commands {
-				result = util.RemoteExec(host, command, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second) && result
-			}
-			if !result {
-				errCnt++
-			}
-			log.Printf("progress [%v/%v/%v]...\n", idx+1, errCnt, len(hosts))
+
+		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
+			thread = 1
 		}
+		util.Process(thread, hosts, commands, func(host *util.Host, commands []string) {
+			for _, command := range commands {
+				util.RemoteExec(host, command, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)
+			}
+		})
 		log.Println(term.Greenf("execute command finished."))
+
 	},
 }
 
