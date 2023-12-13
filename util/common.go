@@ -174,6 +174,46 @@ func CreateDir(path string) (bool, error) {
 	return false, err
 }
 
+// DirExists 文件夹是否存在
+func DirExists(ftpClient *sftp.Client, path string) (bool, error) {
+	var (
+		stat os.FileInfo
+		err  error
+	)
+	if ftpClient != nil {
+		stat, err = ftpClient.Stat(path)
+	} else {
+		stat, err = os.Stat(path)
+	}
+	if err == nil {
+		return stat.IsDir(), nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+// FileExists 文件是否存在
+func FileExists(ftpClient *sftp.Client, path string) (bool, error) {
+	var (
+		stat os.FileInfo
+		err  error
+	)
+	if ftpClient != nil {
+		stat, err = ftpClient.Stat(path)
+	} else {
+		stat, err = os.Stat(path)
+	}
+	if err == nil {
+		return !stat.IsDir(), nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
 // Process is concurrent controller
 func Process(taskLimit int, hosts []*Host, tasks []string, exec func(*Host, []string)) {
 	var i, j int

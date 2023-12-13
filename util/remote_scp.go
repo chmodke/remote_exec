@@ -36,10 +36,17 @@ func RemotePut(host *Host, localPath, remoteDir string) bool {
 	}
 	defer localFile.Close()
 
-	ftpClient.MkdirAll(remoteDir)
-	fileName := path.Base(localPath)
+	if exists, _ := DirExists(ftpClient, remoteDir); !exists {
+		ftpClient.MkdirAll(remoteDir)
+	}
 
-	remoteFile, err := ftpClient.Create(path.Join(remoteDir, fileName))
+	fileName := path.Base(localPath)
+	remotePath := path.Join(remoteDir, fileName)
+	if exists, _ := FileExists(ftpClient, remotePath); exists {
+		ftpClient.Remove(remotePath)
+	}
+
+	remoteFile, err := ftpClient.Create(remotePath)
 	if err != nil {
 		log.Println(term.Redf("[%s:%v] sftp create %s error: %v", host.Host, host.Port, remoteDir, err))
 		return false
@@ -81,10 +88,16 @@ func RemoteGet(host *Host, remotePath, localDir string) bool {
 	}
 	defer ftpClient.Close()
 
-	CreateDir(localDir)
-	fileName := path.Base(remotePath)
+	if exists, _ := DirExists(nil, localDir); !exists {
+		CreateDir(localDir)
+	}
 
-	localFile, err := os.Create(path.Join(localDir, host.Host+"_"+cast.ToString(host.Port)+"_"+fileName))
+	fileName := path.Base(remotePath)
+	localPath := path.Join(localDir, host.Host+"_"+cast.ToString(host.Port)+"_"+fileName)
+	if exists, _ := FileExists(nil, localPath); exists {
+		os.Remove(localPath)
+	}
+	localFile, err := os.Create(localPath)
 	if err != nil {
 		log.Println(term.Redf("[%s:%v] create %s error: %v", host.Host, host.Port, localDir, err))
 		return false
