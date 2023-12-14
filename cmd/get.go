@@ -11,11 +11,11 @@ import (
 	"strings"
 )
 
-var downloadCmd = &cobra.Command{
-	Use:     "download",
-	Short:   "download file from remote",
-	Long:    "download file from remote",
-	Example: "remote download",
+var getCmd = &cobra.Command{
+	Use:     "get",
+	Short:   "get file from remote",
+	Long:    "get file from remote",
+	Example: "remote get",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			err     error
@@ -33,8 +33,8 @@ var downloadCmd = &cobra.Command{
 			return
 		}
 
-		files = command.GetStringSlice("download")
-		log.Println("start download file...")
+		files = command.GetStringSlice("get")
+		log.Println("start get file...")
 
 		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
 			thread = 1
@@ -54,10 +54,10 @@ var downloadCmd = &cobra.Command{
 				util.RemoteGet(host, from, to)
 			}
 		})
-		log.Println(term.Greenf("download file finished."))
+		log.Println(term.Greenf("get file finished."))
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(downloadCmd)
+	rootCmd.AddCommand(getCmd)
 }

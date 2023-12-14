@@ -11,11 +11,11 @@ import (
 	"strings"
 )
 
-var uploadCmd = &cobra.Command{
-	Use:     "upload",
-	Short:   "upload file to remote",
-	Long:    "upload file to remote",
-	Example: "remote upload",
+var putCmd = &cobra.Command{
+	Use:     "put",
+	Short:   "put file to remote",
+	Long:    "put file to remote",
+	Example: "remote put",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			err     error
@@ -33,9 +33,9 @@ var uploadCmd = &cobra.Command{
 			return
 		}
 
-		files = command.GetStringSlice("upload")
+		files = command.GetStringSlice("put")
 
-		log.Println("start upload file...")
+		log.Println("start put file...")
 
 		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
 			thread = 1
@@ -55,10 +55,10 @@ var uploadCmd = &cobra.Command{
 				util.RemotePut(host, from, to)
 			}
 		})
-		log.Println(term.Greenf("upload file finished."))
+		log.Println(term.Greenf("put file finished."))
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(uploadCmd)
+	rootCmd.AddCommand(putCmd)
 }

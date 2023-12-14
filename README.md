@@ -46,18 +46,18 @@ spc_hosts:
 command.yaml文件
 
 ```yaml
-upload:
+put:
   - /home/kehao/test.txt#/home/kehao
   - /home/kehao/test.sh#/home/kehao
-commands:
+exec:
   - /bin/sh /home/kehao/test.sh
-download:
+get:
   - /home/kehao/result.txt#/home/kehao/result
 ```
 
-- upload：上传文件列表，格式：`本地文件路径#远程目录名称`，远程目录名称可缺省，默认与本地文件路径的目录名相同，ssh登录用户需要具有远程目录的写权限；
-- commands：需要执行的命令列表，命令将以`root`用户执行；
-- download：下载的文件列表，格式：`远程文件路径#本地目录名称`，本地目录名称可缺省，默认与远程文件路径的目录名相同，ssh登录用户需要具有远程文件的读权限。
+- put：上传文件列表，格式：`本地文件路径#远程目录名称`，远程目录名称可缺省，默认与本地文件路径的目录名相同，ssh登录用户需要具有远程目录的写权限；
+- exec：需要执行的命令列表，命令将以`root`用户执行；
+- get：下载的文件列表，格式：`远程文件路径#本地目录名称`，本地目录名称可缺省，默认与远程文件路径的目录名相同，ssh登录用户需要具有远程文件的读权限。
 
 ## 使用方法
 
@@ -66,19 +66,19 @@ download:
 #### 批量上传
 
 ```shell
-remote upload
+remote put
 ```
 
 #### 批量执行
 
 ```shell
-remote execute
+remote exec
 ```
 
 #### 批量下载
 
 ```shell
-remote download
+remote get
 ```
 
 ### 参数
@@ -92,10 +92,10 @@ Usage:
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  download    download file from remote
-  execute     execute command on remote
+  exec        execute command on remote
+  get         get file from remote
   help        Help about any command
-  upload      upload file to remote
+  put         put file to remote
 
 Flags:
   -h, --help         help for remote
@@ -124,23 +124,23 @@ chown kehao: /home/kehao/result.txt
 运行日志：
 
 ```powershell
-kehao@kehaopcs ~/remote_exec $ ./remote upload
-2023/08/05 11:39:40 start upload file...
-2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:40 [172.18.0.3:22] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:41 [172.18.0.3:22] upload /home/kehao/test.sh finished!
-2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:41 [172.18.0.4:22] upload /home/kehao/test.sh finished!
-2023/08/05 11:39:41 [127.0.0.1:22] upload /home/kehao/test.txt to /home/kehao.
-2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.txt finished!
-2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.sh to /home/kehao.
-2023/08/05 11:39:42 [127.0.0.1:22] upload /home/kehao/test.sh finished!
-2023/08/05 11:39:42 upload file finished.
+kehao@kehaopcs ~/remote_exec $ ./remote put
+2023/08/05 11:39:40 start put file...
+2023/08/05 11:39:40 [172.18.0.3:22] put /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:40 [172.18.0.3:22] put /home/kehao/test.txt finished!
+2023/08/05 11:39:40 [172.18.0.3:22] put /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.3:22] put /home/kehao/test.sh finished!
+2023/08/05 11:39:41 [172.18.0.4:22] put /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.4:22] put /home/kehao/test.txt finished!
+2023/08/05 11:39:41 [172.18.0.4:22] put /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:41 [172.18.0.4:22] put /home/kehao/test.sh finished!
+2023/08/05 11:39:41 [127.0.0.1:22] put /home/kehao/test.txt to /home/kehao.
+2023/08/05 11:39:42 [127.0.0.1:22] put /home/kehao/test.txt finished!
+2023/08/05 11:39:42 [127.0.0.1:22] put /home/kehao/test.sh to /home/kehao.
+2023/08/05 11:39:42 [127.0.0.1:22] put /home/kehao/test.sh finished!
+2023/08/05 11:39:42 put file finished.
 
-kehao@kehaopcs ~/remote_exec $ ./remote execute
+kehao@kehaopcs ~/remote_exec $ ./remote exec
 2023/08/05 11:39:45 start execute command...
 2023/08/05 11:39:45 [172.18.0.3:22] execute (/bin/sh /home/kehao/test.sh).
 2023/08/05 11:39:46 [172.18.0.3:22] execute (/bin/sh /home/kehao/test.sh) result: 
@@ -159,15 +159,15 @@ I am 172.18.0.5 :)
 2023/08/05 11:39:49 [127.0.0.1:22] execute command finished!
 2023/08/05 11:39:49 execute command finished.
 
-kehao@kehaopcs ~/remote_exec $ ./remote download
-2023/08/05 11:40:09 start download file...
-2023/08/05 11:40:09 [172.18.0.3:22] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:09 [172.18.0.3:22] download /home/kehao/result.txt finished!
-2023/08/05 11:40:09 [172.18.0.4:22] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:10 [172.18.0.4:22] download /home/kehao/result.txt finished!
-2023/08/05 11:40:10 [127.0.0.1:22] download /home/kehao/result.txt to /home/kehao/result.
-2023/08/05 11:40:10 [127.0.0.1:22] download /home/kehao/result.txt finished!
-2023/08/05 11:40:10 download file finished.
+kehao@kehaopcs ~/remote_exec $ ./remote get
+2023/08/05 11:40:09 start get file...
+2023/08/05 11:40:09 [172.18.0.3:22] get file from /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:09 [172.18.0.3:22] get /home/kehao/result.txt finished!
+2023/08/05 11:40:09 [172.18.0.4:22] get file from /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:10 [172.18.0.4:22] get /home/kehao/result.txt finished!
+2023/08/05 11:40:10 [127.0.0.1:22] get file from /home/kehao/result.txt to /home/kehao/result.
+2023/08/05 11:40:10 [127.0.0.1:22] get /home/kehao/result.txt finished!
+2023/08/05 11:40:10 get file finished.
 ```
 
 操作结果：

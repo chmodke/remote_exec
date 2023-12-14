@@ -11,7 +11,7 @@ import (
 )
 
 func RemotePut(host *Host, localPath, remoteDir string) bool {
-	log.Printf("[%s:%v] upload %s to %s.\n", host.Host, host.Port, localPath, remoteDir)
+	log.Printf("[%s:%v] put %s to %s.\n", host.Host, host.Port, localPath, remoteDir)
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
@@ -65,12 +65,12 @@ func RemotePut(host *Host, localPath, remoteDir string) bool {
 			remoteFile.Write(buf[:len])
 		}
 	}
-	log.Println(term.Bluef("[%s:%v] upload %s finished!", host.Host, host.Port, localPath))
+	log.Println(term.Bluef("[%s:%v] put %s finished!", host.Host, host.Port, localPath))
 	return true
 }
 
 func RemoteGet(host *Host, remotePath, localDir string) bool {
-	log.Printf("[%s:%v] download %s to %s.\n", host.Host, host.Port, remotePath, localDir)
+	log.Printf("[%s:%v] get file from %s to %s.\n", host.Host, host.Port, remotePath, localDir)
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
@@ -113,6 +113,6 @@ func RemoteGet(host *Host, remotePath, localDir string) bool {
 
 	remoteFile.WriteTo(localFile)
 
-	log.Println(term.Bluef("[%s:%v] download %s finished!", host.Host, host.Port, remotePath))
+	log.Println(term.Bluef("[%s:%v] get %s finished!", host.Host, host.Port, remotePath))
 	return true
 }

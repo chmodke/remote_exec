@@ -1,7 +1,7 @@
-upload:
+put:
   - /home/kehao/test.txt#/home/kehao
   - /home/kehao/test.sh#/home/kehao
-commands:
+exec:
   - /bin/sh /home/kehao/test.sh
-download:
+get:
   - /home/kehao/result.txt#/home/kehao/result

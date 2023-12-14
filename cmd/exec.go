@@ -10,11 +10,11 @@ import (
 	"time"
 )
 
-var executeCmd = &cobra.Command{
-	Use:     "execute",
+var execCmd = &cobra.Command{
+	Use:     "exec",
 	Short:   "execute command on remote",
 	Long:    "execute command on remote",
-	Example: "remote execute",
+	Example: "remote exec",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			err          error
@@ -45,7 +45,7 @@ var executeCmd = &cobra.Command{
 			timeout = config.GetInt64("timeout")
 		}
 
-		commands = command.GetStringSlice("commands")
+		commands = command.GetStringSlice("exec")
 
 		rootPrompt = regexp.MustCompile(config.GetString("rootPrompt"))
 		passwdPrompt = regexp.MustCompile(config.GetString("passwdPrompt"))
@@ -66,5 +66,5 @@ var executeCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(executeCmd)
+	rootCmd.AddCommand(execCmd)
 }
