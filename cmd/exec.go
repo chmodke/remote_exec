@@ -17,27 +17,29 @@ var execCmd = &cobra.Command{
 	Example: "remote exec",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			err          error
-			config       *viper.Viper
-			command      *viper.Viper
-			hosts        []*util.Host
-			commands     []string
-			rootPrompt   *regexp.Regexp
-			passwdPrompt *regexp.Regexp
-			timeout      = int64(10)
-			thread       int
+			err            error
+			config         *viper.Viper
+			command        *viper.Viper
+			hosts          []*util.Host
+			commands       []string
+			rootPrompt     *regexp.Regexp
+			passwdPrompt   *regexp.Regexp
+			timeout        = int64(10)
+			thread, _      = cmd.Flags().GetInt(util.ConstThread)
+			configPath, _  = cmd.Flags().GetString(util.ConstConfig)
+			commandPath, _ = cmd.Flags().GetString(util.ConstCommand)
 		)
 
-		if hosts, err = util.ParseHosts(); err != nil {
+		if hosts, err = util.ParseHosts(configPath); err != nil {
 			log.Println(term.Redf(err.Error()))
 			return
 		}
-		if config, err = util.LoadCfg("config"); err != nil {
-			log.Println(term.Redf("load config.yaml failed."))
+		if config, err = util.LoadCfg(configPath, util.DefaultConfig); err != nil {
+			log.Println(term.Redf(err.Error()))
 			return
 		}
-		if command, err = util.LoadCfg("command"); err != nil {
-			log.Println(term.Redf("load command.yaml failed."))
+		if command, err = util.LoadCfg(commandPath, util.DefaultCommand); err != nil {
+			log.Println(term.Redf(err.Error()))
 			return
 		}
 
@@ -47,14 +49,11 @@ var execCmd = &cobra.Command{
 
 		commands = command.GetStringSlice("exec")
 
-		rootPrompt = regexp.MustCompile(config.GetString("rootPrompt"))
-		passwdPrompt = regexp.MustCompile(config.GetString("passwdPrompt"))
+		rootPrompt = regexp.MustCompile(config.GetString("root-prompt"))
+		passwdPrompt = regexp.MustCompile(config.GetString("passwd-prompt"))
 
 		log.Println("start execute command...")
 
-		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
-			thread = 1
-		}
 		util.Process(thread, hosts, commands, func(host *util.Host, commands []string) {
 			for _, command := range commands {
 				util.RemoteExec(host, command, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)

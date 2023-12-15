@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/google/goterm/term"
 	"github.com/pkg/sftp"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
@@ -98,15 +99,22 @@ func getHostKey(host string) ssh.PublicKey {
 	return hostKey
 }
 
-func LoadCfg(configName string) (*viper.Viper, error) {
-	var v = viper.New()
-	v.SetConfigName(configName)
-	v.SetConfigType("yaml")
-	v.AddConfigPath("./")
+func LoadCfg(configPath string, defaultConfig string) (*viper.Viper, error) {
+	var (
+		v       = viper.New()
+		cfgPath string
+	)
+	if r, _ := FileExists(nil, configPath); r {
+		cfgPath = configPath
+	} else {
+		log.Printf(term.Yellowf("config file %s not found, will use %s.", configPath, defaultConfig))
+		cfgPath = defaultConfig
+	}
 
+	v.SetConfigFile(cfgPath)
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, fmt.Errorf("config file %s.%s not found", configName, "yaml")
+			return nil, fmt.Errorf("config file %s not found", cfgPath)
 		} else {
 			return nil, err
 		}
@@ -116,7 +124,7 @@ func LoadCfg(configName string) (*viper.Viper, error) {
 }
 
 // ParseHosts parse host info from config.yaml
-func ParseHosts() ([]*Host, error) {
+func ParseHosts(configPath string) ([]*Host, error) {
 	var (
 		config   *viper.Viper
 		err      error
@@ -128,8 +136,8 @@ func ParseHosts() ([]*Host, error) {
 		hostList []string
 	)
 
-	if config, err = LoadCfg("config"); err != nil {
-		return hosts, errors.New("load config.yaml failed")
+	if config, err = LoadCfg(configPath, DefaultConfig); err != nil {
+		return hosts, errors.New(err.Error())
 	}
 
 	if config.IsSet("port") {
@@ -137,7 +145,7 @@ func ParseHosts() ([]*Host, error) {
 	}
 	user = config.GetString("user")
 	passwd = config.GetString("passwd")
-	rootPwd = config.GetString("rootPwd")
+	rootPwd = config.GetString("root-passwd")
 	hostList = config.GetStringSlice("hosts")
 
 	for _, host := range hostList {
@@ -145,8 +153,8 @@ func ParseHosts() ([]*Host, error) {
 		hosts = append(hosts, h)
 	}
 
-	if config.IsSet("spc_hosts") {
-		spcHosts := config.GetStringSlice("spc_hosts")
+	if config.IsSet("spc-hosts") {
+		spcHosts := config.GetStringSlice("spc-hosts")
 		for _, spcHost := range spcHosts {
 			params := strings.Split(spcHost, " ")
 			h := &Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}

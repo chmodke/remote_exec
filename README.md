@@ -18,16 +18,21 @@ config.yaml文件
 
 ```yaml
 port: 22
-rootPrompt: '#'
-passwdPrompt: '.*assword.*'
+root-prompt: '#'
+passwd-prompt: '.*assword.*'
 timeout: 10
 user: 'kehao'
 passwd: '123456'
-rootPwd: '123456'
+root-passwd: '123456'
 hosts:
   - '172.18.0.3'
   - '172.18.0.4'
-spc_hosts:
+  - '172.18.0.6'
+  - '172.18.0.7'
+  - '172.18.0.8'
+  - '172.18.0.9'
+  - '172.18.0.10'
+spc-hosts:
   - '127.0.0.1 23 123456 123456'
 ```
 
@@ -98,13 +103,17 @@ Available Commands:
   put         put file to remote
 
 Flags:
-  -h, --help         help for remote
-  -t, --thread int   maximum number of concurrent (0 < t <= 16) (default 1)
-  -v, --version      version for remote
+  -c, --command string   Specify commands configuration (default "command.yaml")
+  -f, --config string    Specify servers configuration (default "config.yaml")
+  -h, --help             help for remote
+  -t, --thread int       maximum number of concurrent (0 < t <= 16) (default 1)
+  -v, --version          version for remote
 
 Use "remote [command] --help" for more information about a command.
 ```
 
+- 服务器配置文件（f），默认值config.yaml
+- 命令配置文件（c），默认值command.yaml
 - 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序。
 
 ## 使用样例

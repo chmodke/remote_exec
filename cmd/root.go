@@ -2,8 +2,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"remote_exec/util"
 )
 
 var rootCmd = &cobra.Command{
@@ -19,6 +21,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Version = "1.0.1\nReport Bug: <https://gitee.com/chmodke/remote_exec/>"
-	rootCmd.PersistentFlags().IntP("thread", "t", 1, "maximum number of concurrent (0 < t <= 16)")
+	rootCmd.Version = fmt.Sprintf("%s\nReport Bug: <https://gitee.com/chmodke/remote_exec/>", util.VERSION)
+	rootCmd.PersistentFlags().IntP(util.ConstThread, "t", util.DefaultThread, "maximum number of concurrent (0 < t <= 16)")
+	rootCmd.PersistentFlags().StringP(util.ConstConfig, "f", util.DefaultConfig, "Specify servers configuration")
+	rootCmd.PersistentFlags().StringP(util.ConstCommand, "c", util.DefaultCommand, "Specify commands configuration")
 }

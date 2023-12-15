@@ -18,18 +18,20 @@ var putCmd = &cobra.Command{
 	Example: "remote put",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			err     error
-			command *viper.Viper
-			hosts   []*util.Host
-			files   []string
-			thread  int
+			err            error
+			command        *viper.Viper
+			hosts          []*util.Host
+			files          []string
+			thread, _      = cmd.Flags().GetInt(util.ConstThread)
+			configPath, _  = cmd.Flags().GetString(util.ConstConfig)
+			commandPath, _ = cmd.Flags().GetString(util.ConstCommand)
 		)
-		if hosts, err = util.ParseHosts(); err != nil {
+		if hosts, err = util.ParseHosts(configPath); err != nil {
 			log.Println(term.Redf(err.Error()))
 			return
 		}
-		if command, err = util.LoadCfg("command"); err != nil {
-			log.Println(term.Redf("load command.yaml failed."))
+		if command, err = util.LoadCfg(commandPath, util.DefaultCommand); err != nil {
+			log.Println(term.Redf(err.Error()))
 			return
 		}
 
@@ -37,9 +39,6 @@ var putCmd = &cobra.Command{
 
 		log.Println("start put file...")
 
-		if thread, err = cmd.Flags().GetInt("thread"); err != nil {
-			thread = 1
-		}
 		util.Process(thread, hosts, files, func(host *util.Host, files []string) {
 			for _, file := range files {
 				params := strings.Split(file, "#")
