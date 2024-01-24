@@ -32,16 +32,19 @@ func RemoteExec(host *Host, command string, rootPrompt, passwdPrompt *regexp.Reg
 
 	expect.Send("su - root" + "\n")
 	if result, _, err = expect.Expect(passwdPrompt, timeout); err != nil {
+		log.Println(term.Yellowf("[%s:%v] change user, expected: (%v), actual: (%v)", host.Host, host.Port, passwdPrompt, result))
 		log.Println(term.Redf("[%s:%v] change user error: %v", host.Host, host.Port, err))
 		return false
 	}
 	expect.Send(host.RootPwd + "\n")
 	if result, _, err = expect.Expect(rootPrompt, timeout); err != nil {
+		log.Println(term.Yellowf("[%s:%v] send passwd, expected: (%v), actual: (%v)", host.Host, host.Port, rootPrompt, result))
 		log.Println(term.Redf("[%s:%v] send passwd error: %v", host.Host, host.Port, err))
 		return false
 	}
 	expect.Send(command + "\n")
 	if result, _, err = expect.Expect(rootPrompt, timeout); err != nil {
+		log.Println(term.Yellowf("[%s:%v] execute command, expected: (%v), actual: (%v)", host.Host, host.Port, rootPrompt, result))
 		log.Println(term.Redf("[%s:%v] execute command error: %v", host.Host, host.Port, err))
 		return false
 	} else {
