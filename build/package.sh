@@ -21,4 +21,4 @@ cp ../README.md ../dest/
 
 cd ../dest
 
-tar -czf remote_exec.tar.gz *
+zip remote_exec.zip *
