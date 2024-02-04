@@ -6,9 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
-	"path"
 	"remote_exec/util"
-	"strings"
 )
 
 var putCmd = &cobra.Command{
@@ -40,19 +38,7 @@ var putCmd = &cobra.Command{
 		log.Println("start put file...")
 
 		util.Process(thread, hosts, files, func(host *util.Host, files []string) {
-			for _, file := range files {
-				params := strings.Split(file, "#")
-				var (
-					from string
-					to   string
-				)
-				from = params[0]
-				to = path.Dir(params[0])
-				if len(params) == 2 {
-					to = params[1]
-				}
-				util.RemotePut(host, from, to)
-			}
+			util.RemotePut(host, files)
 		})
 		log.Println(term.Greenf("put file finished."))
 	},

@@ -1,7 +1,7 @@
 package util
 
 const (
-	VERSION        = "1.0.2"
+	VERSION        = "1.0.3"
 	ConstThread    = "thread"
 	DefaultThread  = 1
 	ConstConfig    = "config"

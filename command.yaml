@@ -1,7 +1,11 @@
 put:
-  - /home/kehao/test.txt#/home/kehao
-  - /home/kehao/test.sh#/home/kehao
+  - /home/kehao/test1.txt#/home/kehao
+  - /home/kehao/test2.txt#/home/kehao
+  - /home/kehao/test1.sh#/home/kehao
+  - /home/kehao/test2.sh#/home/kehao
 exec:
-  - /bin/sh /home/kehao/test.sh
+  - /bin/sh /home/kehao/test1.sh
+  - /bin/sh /home/kehao/test2.sh
 get:
-  - /home/kehao/result.txt#/home/kehao/result
+  - /home/kehao/result1.txt#/home/kehao/result
+  - /home/kehao/result2.txt#/home/kehao/result

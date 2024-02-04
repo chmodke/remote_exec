@@ -8,10 +8,10 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 )
 
-func RemotePut(host *Host, localPath, remoteDir string) bool {
-	log.Printf("[%s:%v] put %s to %s.\n", host.Host, host.Port, localPath, remoteDir)
+func RemotePut(host *Host, files []string) bool {
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
@@ -29,6 +29,25 @@ func RemotePut(host *Host, localPath, remoteDir string) bool {
 	}
 	defer ftpClient.Close()
 
+	for _, file := range files {
+		params := strings.Split(file, "#")
+		var (
+			localPath string
+			remoteDir string
+		)
+		localPath = params[0]
+		remoteDir = path.Dir(params[0])
+		if len(params) == 2 {
+			remoteDir = params[1]
+		}
+		put(host, ftpClient, localPath, remoteDir)
+	}
+
+	return true
+}
+
+func put(host *Host, ftpClient *sftp.Client, localPath, remoteDir string) bool {
+	log.Printf("[%s:%v] upload %s to %s.\n", host.Host, host.Port, localPath, remoteDir)
 	localFile, err := os.Open(localPath)
 	if err != nil {
 		log.Println(term.Redf("[%s:%v] open %s error: %v", host.Host, host.Port, localPath, err))
@@ -65,12 +84,11 @@ func RemotePut(host *Host, localPath, remoteDir string) bool {
 			remoteFile.Write(buf[:len])
 		}
 	}
-	log.Println(term.Bluef("[%s:%v] put %s finished!", host.Host, host.Port, localPath))
+	log.Println(term.Bluef("[%s:%v] upload %s finished!", host.Host, host.Port, localPath))
 	return true
 }
 
-func RemoteGet(host *Host, remotePath, localDir string) bool {
-	log.Printf("[%s:%v] get file from %s to %s.\n", host.Host, host.Port, remotePath, localDir)
+func RemoteGet(host *Host, files []string) bool {
 	var (
 		sshClient *ssh.Client
 		ftpClient *sftp.Client
@@ -88,6 +106,24 @@ func RemoteGet(host *Host, remotePath, localDir string) bool {
 	}
 	defer ftpClient.Close()
 
+	for _, file := range files {
+		params := strings.Split(file, "#")
+		var (
+			remotePath string
+			localDir   string
+		)
+		remotePath = params[0]
+		localDir = path.Dir(params[0])
+		if len(params) == 2 {
+			localDir = params[1]
+		}
+		get(host, ftpClient, remotePath, localDir)
+	}
+	return true
+}
+
+func get(host *Host, ftpClient *sftp.Client, remotePath, localDir string) bool {
+	log.Printf("[%s:%v] download file from %s to %s.\n", host.Host, host.Port, remotePath, localDir)
 	if exists, _ := DirExists(nil, localDir); !exists {
 		CreateDir(localDir)
 	}
@@ -113,6 +149,6 @@ func RemoteGet(host *Host, remotePath, localDir string) bool {
 
 	remoteFile.WriteTo(localFile)
 
-	log.Println(term.Bluef("[%s:%v] get %s finished!", host.Host, host.Port, remotePath))
+	log.Println(term.Bluef("[%s:%v] download %s finished!", host.Host, host.Port, remotePath))
 	return true
 }

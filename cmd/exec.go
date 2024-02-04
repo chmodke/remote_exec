@@ -55,9 +55,8 @@ var execCmd = &cobra.Command{
 		log.Println("start execute command...")
 
 		util.Process(thread, hosts, commands, func(host *util.Host, commands []string) {
-			for _, command := range commands {
-				util.RemoteExec(host, command, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)
-			}
+			util.RemoteExec(host, commands, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)
+
 		})
 		log.Println(term.Greenf("execute command finished."))
 
