@@ -24,7 +24,7 @@ var getCmd = &cobra.Command{
 			configPath, _  = cmd.Flags().GetString(util.ConstConfig)
 			commandPath, _ = cmd.Flags().GetString(util.ConstCommand)
 		)
-		if hosts, err = util.ParseHosts(configPath); err != nil {
+		if hosts, err = util.ParseHosts(configPath, cmd); err != nil {
 			log.Println(term.Redf(err.Error()))
 			return
 		}

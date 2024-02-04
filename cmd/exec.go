@@ -30,7 +30,7 @@ var execCmd = &cobra.Command{
 			commandPath, _ = cmd.Flags().GetString(util.ConstCommand)
 		)
 
-		if hosts, err = util.ParseHosts(configPath); err != nil {
+		if hosts, err = util.ParseHosts(configPath, cmd); err != nil {
 			log.Println(term.Redf(err.Error()))
 			return
 		}

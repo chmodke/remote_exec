@@ -25,4 +25,5 @@ func init() {
 	rootCmd.PersistentFlags().IntP(util.ConstThread, "t", util.DefaultThread, "maximum number of concurrent (0 < t <= 16)")
 	rootCmd.PersistentFlags().StringP(util.ConstConfig, "f", util.DefaultConfig, "Specify servers configuration")
 	rootCmd.PersistentFlags().StringP(util.ConstCommand, "c", util.DefaultCommand, "Specify commands configuration")
+	rootCmd.PersistentFlags().StringP(util.ConstNetMask, "m", "", "ip filter, e.g. 192.168.1.1 192.168.1.1,192.168.1.2 192.168.0.0/24")
 }

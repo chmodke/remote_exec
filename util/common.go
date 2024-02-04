@@ -7,9 +7,11 @@ import (
 	"github.com/google/goterm/term"
 	"github.com/pkg/sftp"
 	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 	"log"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -124,16 +126,17 @@ func LoadCfg(configPath string, defaultConfig string) (*viper.Viper, error) {
 }
 
 // ParseHosts parse host info from config.yaml
-func ParseHosts(configPath string) ([]*Host, error) {
+func ParseHosts(configPath string, cmd *cobra.Command) ([]*Host, error) {
 	var (
-		config   *viper.Viper
-		err      error
-		hosts    []*Host
-		port     = 22
-		user     string
-		passwd   string
-		rootPwd  string
-		hostList []string
+		config     *viper.Viper
+		err        error
+		hosts      []*Host
+		port       = 22
+		user       string
+		passwd     string
+		rootPwd    string
+		hostList   []string
+		netMask, _ = cmd.Flags().GetString(ConstNetMask)
 	)
 
 	if config, err = LoadCfg(configPath, DefaultConfig); err != nil {
@@ -149,16 +152,20 @@ func ParseHosts(configPath string) ([]*Host, error) {
 	hostList = config.GetStringSlice("hosts")
 
 	for _, host := range hostList {
-		h := &Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
-		hosts = append(hosts, h)
+		if len(netMask) == 0 || IpAllow(host, netMask) {
+			h := &Host{Port: port, Host: host, User: user, Passwd: passwd, RootPwd: rootPwd}
+			hosts = append(hosts, h)
+		}
 	}
 
 	if config.IsSet("spc-hosts") {
 		spcHosts := config.GetStringSlice("spc-hosts")
 		for _, spcHost := range spcHosts {
 			params := strings.Split(spcHost, " ")
-			h := &Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}
-			hosts = append(hosts, h)
+			if len(netMask) == 0 || IpAllow(params[0], netMask) {
+				h := &Host{User: user, Host: params[0], Port: cast.ToInt(params[1]), Passwd: params[2], RootPwd: params[3]}
+				hosts = append(hosts, h)
+			}
 		}
 	}
 	return hosts, nil
@@ -264,5 +271,28 @@ func Max(x, y int) int {
 		return x
 	} else {
 		return y
+	}
+}
+
+// IpAllow judge the ip address matches the mask
+// ip 192.168.1.1
+// netmask "192.168.0.0/24" "192.168.1.1" "192.168.1.1,192.168.1.2"
+func IpAllow(ip string, netmask string) bool {
+	if ip == netmask {
+		return true
+	}
+	for _, sub := range strings.Split(netmask, ",") {
+		if sub == ip {
+			return true
+		}
+	}
+	if !strings.Contains(netmask, "/") {
+		return false
+	}
+	ips := net.ParseIP(ip)
+	if _, ipNet, err := net.ParseCIDR(netmask); err != nil {
+		return true
+	} else {
+		return ipNet.Contains(ips)
 	}
 }

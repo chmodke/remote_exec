@@ -110,6 +110,7 @@ Flags:
   -c, --command string   Specify commands configuration (default "command.yaml")
   -f, --config string    Specify servers configuration (default "config.yaml")
   -h, --help             help for remote
+  -m, --netmask string   ip filter, e.g. 192.168.1.1 192.168.1.1,192.168.1.2 192.168.0.0/24
   -t, --thread int       maximum number of concurrent (0 < t <= 16) (default 1)
   -v, --version          version for remote
 
@@ -118,7 +119,8 @@ Use "remote [command] --help" for more information about a command.
 
 - 服务器配置文件（f），默认值config.yaml
 - 命令配置文件（c），默认值command.yaml
-- 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序。
+- 最大并发数（t），0 < t <= 16，默认值1，开启并发执行能提高执行效率，但是输出结果会乱序
+- IP地址过滤（m），默认为空，支持192.168.1.1、192.168.1.1,192.168.1.2、192.168.0.0/24三种写法，匹配的主机才会执行
 
 ## 使用样例
 
@@ -418,8 +420,3 @@ uid=0(root) gid=0(root) groups=0(root)
 -rw-rw-r--. 1 kehao kehao 10 Feb  4 16:59 /home/kehao/test2.txt
 0987654321
 ```
-
-## PLAN
-
-- 链接复用
-- 支持过滤规则
