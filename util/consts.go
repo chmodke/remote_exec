@@ -1,7 +1,8 @@
 package util
 
+var VERSION = "1.0.3"
+
 const (
-	VERSION        = "1.0.3"
 	ConstThread    = "thread"
 	DefaultThread  = 1
 	ConstNetMask   = "netmask"

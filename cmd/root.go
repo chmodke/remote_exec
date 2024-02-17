@@ -10,8 +10,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "remote",
-	Short: "remote execute tool",
-	Long:  "remote execute tool",
+	Short: "shell batch execute tool",
+	Long:  "shell batch execute tool",
 }
 
 func Execute() {
