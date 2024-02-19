@@ -1,11 +1,11 @@
 package util
 
 import (
-	goexpect "github.com/google/goexpect"
-	"github.com/google/goterm/term"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"regexp"
+	goexpect "remote_exec/goexpect"
+	"remote_exec/goterm/term"
 	"time"
 )
 

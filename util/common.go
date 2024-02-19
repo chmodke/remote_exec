@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/google/goterm/term"
 	"github.com/pkg/sftp"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -14,6 +13,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"remote_exec/goterm/term"
 	"strings"
 	"sync"
 	"time"
@@ -109,7 +109,7 @@ func LoadCfg(configPath string, defaultConfig string) (*viper.Viper, error) {
 	if r, _ := FileExists(nil, configPath); r {
 		cfgPath = configPath
 	} else {
-		log.Printf(term.Yellowf("config file %s not found, will use %s.", configPath, defaultConfig))
+		log.Println(term.Yellowf("config file %s not found, will use %s.", configPath, defaultConfig))
 		cfgPath = defaultConfig
 	}
 

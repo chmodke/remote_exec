@@ -1,13 +1,14 @@
 package util
 
 import (
-	"github.com/google/goterm/term"
 	"github.com/pkg/sftp"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/ssh"
+	"io"
 	"log"
 	"os"
 	"path"
+	"remote_exec/goterm/term"
 	"strings"
 )
 
@@ -35,7 +36,7 @@ func RemotePut(host *Host, files []string) bool {
 			localPath string
 			remoteDir string
 		)
-		localPath = params[0]
+		localPath = strings.ReplaceAll(params[0], "\\", "/")
 		remoteDir = path.Dir(params[0])
 		if len(params) == 2 {
 			remoteDir = params[1]
@@ -72,18 +73,7 @@ func put(host *Host, ftpClient *sftp.Client, localPath, remoteDir string) bool {
 	}
 	defer remoteFile.Close()
 
-	var buf = make([]byte, 1024)
-	for {
-		var len = 0
-		len, err = localFile.Read(buf)
-		if err != nil {
-			break
-		} else if len == 0 {
-			break
-		} else {
-			remoteFile.Write(buf[:len])
-		}
-	}
+	io.Copy(remoteFile, localFile)
 	log.Println(term.Bluef("[%s:%v] upload %s finished!", host.Host, host.Port, localPath))
 	return true
 }
@@ -115,7 +105,7 @@ func RemoteGet(host *Host, files []string) bool {
 		remotePath = params[0]
 		localDir = path.Dir(params[0])
 		if len(params) == 2 {
-			localDir = params[1]
+			localDir = strings.ReplaceAll(params[1], "\\", "/")
 		}
 		get(host, ftpClient, remotePath, localDir)
 	}

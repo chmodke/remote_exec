@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/google/goterm/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
 	"regexp"
+	"remote_exec/goterm/term"
 	"remote_exec/util"
 	"time"
 )
