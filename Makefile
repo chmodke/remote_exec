@@ -1,11 +1,16 @@
-BUILD_VERSION?=1.0.3
+BUILD_VERSION?=1.0.5
 
 BUILD_NAME:=remote
 BUILD_DATE:=$(shell date '+%Y%m%d.%H%M%S')
 BUILD_DIR:=build
 DEST_DIR:=dest
 SRC_FILE:=*.go
-SOFT_VERSION:=$(BUILD_VERSION)-$(BUILD_DATE)
+
+ifdef IS_RELEASE
+	SOFT_VERSION:=$(BUILD_VERSION)
+else
+	SOFT_VERSION:=$(BUILD_VERSION)-$(BUILD_DATE)
+endif
 
 LDFLAGS:=-ldflags "-s -w -X remote_exec/util.VERSION=$(SOFT_VERSION)"
 
