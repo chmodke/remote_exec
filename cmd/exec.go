@@ -11,7 +11,7 @@ import (
 )
 
 var execCmd = &cobra.Command{
-	Use:     "exec",
+	Use:     "exec [flags] [section]",
 	Short:   "execute command on remote",
 	Long:    "execute command on remote",
 	Example: "remote exec",
@@ -47,14 +47,23 @@ var execCmd = &cobra.Command{
 			timeout = config.GetInt64("timeout")
 		}
 
-		commands = command.GetStringSlice("exec")
+		if len(args) > 0 {
+			section := args[0]
+			if !command.InConfig(section) {
+				log.Println(term.Redf("no %s configuration item found.", section))
+				return
+			}
+			commands = command.Sub(section).GetStringSlice("exec")
+		} else {
+			commands = command.GetStringSlice("exec")
+		}
 
 		rootPrompt = regexp.MustCompile(config.GetString("root-prompt"))
 		passwdPrompt = regexp.MustCompile(config.GetString("passwd-prompt"))
 
 		log.Println("start execute command...")
 
-		util.Process(thread, hosts, commands, func(host *util.Host, commands []string) {
+		util.Process(thread, hosts, func(host *util.Host) {
 			util.RemoteExec(host, commands, rootPrompt, passwdPrompt, time.Duration(timeout)*time.Second)
 
 		})

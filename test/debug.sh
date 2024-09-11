@@ -1,5 +1,5 @@
 readonly BUILD_DIR='build'
-readonly BIN_FILE='remote_linux_x86'
+readonly BIN_FILE='remote_linux_amd64'
 
 readonly CUR_DIR=$(dirname "$0")
 

@@ -10,7 +10,7 @@ import (
 )
 
 var getCmd = &cobra.Command{
-	Use:     "get",
+	Use:     "get [flags] [section]",
 	Short:   "get file from remote",
 	Long:    "get file from remote",
 	Example: "remote get",
@@ -33,10 +33,20 @@ var getCmd = &cobra.Command{
 			return
 		}
 
-		files = command.GetStringSlice("get")
+		if len(args) > 0 {
+			section := args[0]
+			if !command.InConfig(section) {
+				log.Println(term.Redf("no %s configuration item found.", section))
+				return
+			}
+			files = command.Sub(section).GetStringSlice("get")
+		} else {
+			files = command.GetStringSlice("get")
+		}
+
 		log.Println("start get file...")
 
-		util.Process(thread, hosts, files, func(host *util.Host, files []string) {
+		util.Process(thread, hosts, func(host *util.Host) {
 			util.RemoteGet(host, files)
 		})
 		log.Println(term.Greenf("get file finished."))

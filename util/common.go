@@ -230,7 +230,7 @@ func FileExists(ftpClient *sftp.Client, path string) (bool, error) {
 }
 
 // Process is concurrent controller
-func Process(taskLimit int, hosts []*Host, tasks []string, exec func(*Host, []string)) {
+func Process(taskLimit int, hosts []*Host, exec func(*Host)) {
 	var i, j int
 	var jobGroup sync.WaitGroup
 	hostChan := make(chan *Host, len(hosts))
@@ -247,7 +247,7 @@ func Process(taskLimit int, hosts []*Host, tasks []string, exec func(*Host, []st
 			for {
 				if host, ok := <-taskChan; ok {
 					log.Printf("progress [%v/%v]...\n", len(taskChan), cap(taskChan))
-					exec(host, tasks)
+					exec(host)
 					jobGroup.Done()
 				} else {
 					break

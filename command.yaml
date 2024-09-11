@@ -9,3 +9,14 @@ exec:
 get:
   - /home/kehao/result1.txt#/home/kehao/result
   - /home/kehao/result2.txt#/home/kehao/result
+
+arthas:
+  put:
+    - /home/kehao/arthas.sh#/home/kehao
+    - /home/kehao/jdk8.sh#/home/kehao
+  exec:
+    - /bin/sh /home/kehao/arthas.sh
+    - /bin/sh /home/kehao/jdk8.sh
+  get:
+    - /home/kehao/arthas-result.txt#/home/kehao/result
+    - /home/kehao/jdk8-result.txt#/home/kehao/result

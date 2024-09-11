@@ -10,7 +10,7 @@ import (
 )
 
 var putCmd = &cobra.Command{
-	Use:     "put",
+	Use:     "put [flags] [section]",
 	Short:   "put file to remote",
 	Long:    "put file to remote",
 	Example: "remote put",
@@ -33,11 +33,20 @@ var putCmd = &cobra.Command{
 			return
 		}
 
-		files = command.GetStringSlice("put")
+		if len(args) > 0 {
+			section := args[0]
+			if !command.InConfig(section) {
+				log.Println(term.Redf("no %s configuration item found.", section))
+				return
+			}
+			files = command.Sub(section).GetStringSlice("put")
+		} else {
+			files = command.GetStringSlice("put")
+		}
 
 		log.Println("start put file...")
 
-		util.Process(thread, hosts, files, func(host *util.Host, files []string) {
+		util.Process(thread, hosts, func(host *util.Host) {
 			util.RemotePut(host, files)
 		})
 		log.Println(term.Greenf("put file finished."))

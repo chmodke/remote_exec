@@ -62,6 +62,17 @@ exec:
 get:
   - /home/kehao/result1.txt#/home/kehao/result
   - /home/kehao/result2.txt#/home/kehao/result
+
+arthas:
+  put:
+    - /home/kehao/arthas.sh#/home/kehao
+    - /home/kehao/jdk8.sh#/home/kehao
+  exec:
+    - /bin/sh /home/kehao/arthas.sh
+    - /bin/sh /home/kehao/jdk8.sh
+  get:
+    - /home/kehao/arthas-result.txt#/home/kehao/result
+    - /home/kehao/jdk8-result.txt#/home/kehao/result
 ```
 
 - put：上传文件列表，格式：`本地文件路径#远程目录名称`，远程目录名称可缺省，默认与本地文件路径的目录名相同，ssh登录用户需要具有远程目录的写权限；
